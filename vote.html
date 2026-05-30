@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votar — DinoHeroes ARK ASA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A017;
+    --gold-light: #F0C040;
+    --teal: #00C9A7;
+    --teal-dark: #009977;
+    --dark: #060A0F;
+    --dark-2: #0C1420;
+    --dark-3: #121C2B;
+    --dark-4: #1A2535;
+    --text: #D0DCE8;
+    --text-dim: #7A8FA6;
+    --border: rgba(212,160,23,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 64px;
+    background: rgba(6,10,15,0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+  }
+
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-back:hover { color: var(--gold-light); }
+
+  .page-hero {
+    padding: 120px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(212,160,23,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .page-hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(212,160,23,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,160,23,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212,160,23,0.1);
+    border: 1px solid rgba(212,160,23,0.3);
+    color: var(--gold-light);
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    letter-spacing: 6px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 40%, #fff 60%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(212,160,23,0.25));
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .page-desc {
+    color: var(--text-dim);
+    font-size: 1rem;
+    max-width: 560px;
+    margin: 0 auto 60px;
+    line-height: 1.7;
+    position: relative;
+  }
+
+  .content-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px 100px;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* VOTE CARD */
+  .vote-site-card {
+    background: var(--dark-3);
+    border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 14px;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    text-decoration: none;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vote-site-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    background: linear-gradient(180deg, var(--gold), var(--gold-light));
+    transform: scaleY(0);
+    transition: transform 0.3s;
+  }
+
+  .vote-site-card:hover {
+    border-color: rgba(212,160,23,0.6);
+    transform: translateX(4px);
+    box-shadow: -4px 0 20px rgba(212,160,23,0.1), 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .vote-site-card:hover::after { transform: scaleY(1); }
+
+  .vote-site-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background: var(--dark-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+    border: 1px solid rgba(212,160,23,0.2);
+  }
+
+  .vote-site-info { flex: 1; }
+
+  .vote-site-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .vote-site-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .vote-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* INFO BOXES */
+  .info-box {
+    background: var(--dark-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 28px;
+    margin-top: 24px;
+  }
+
+  .info-box-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-box-title::before {
+    content: '';
+    width: 16px;
+    height: 2px;
+    background: var(--teal);
+  }
+
+  .info-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .info-step:last-child { border-bottom: none; }
+
+  .info-step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(212,160,23,0.15);
+    border: 1px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--gold);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .info-step-text {
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.6;
+    padding-top: 4px;
+  }
+
+  .info-step-text strong { color: var(--gold-light); }
+
+  /* SIDEBAR */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 84px;
+  }
+
+  .sidebar-card {
+    background: var(--dark-3);
+    border-radius: 14px;
+    padding: 28px;
+    border: 1px solid rgba(212,160,23,0.12);
+  }
+
+  .sidebar-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sidebar-title::before {
+    content: '';
+    width: 16px;
+    height: 2px;
+    background: var(--gold);
+  }
+
+  .reward-tier {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    background: var(--dark-2);
+    border-radius: 8px;
+    border: 1px solid transparent;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .reward-tier:last-child { margin-bottom: 0; }
+  .reward-tier:hover { border-color: rgba(212,160,23,0.15); }
+
+  .tier-icon { font-size: 1.4rem; }
+
+  .tier-info { flex: 1; }
+
+  .tier-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .tier-desc {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .tier-reward {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--gold-light);
+  }
+
+  .status-card {
+    background: var(--dark-3);
+    border: 1px solid rgba(0,201,167,0.2);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)} }
+
+  footer {
+    background: var(--dark-2);
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .footer-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--gold-light); }
+
+  .footer-copy { font-size: 0.78rem; color: rgba(120,140,160,0.5); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .page-hero { padding: 100px 20px 40px; }
+    .content-wrapper { grid-template-columns: 1fr; padding: 0 20px 60px; }
+    .sidebar { position: static; }
+    .vote-site-card { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">DinoHeroes</a>
+  <a href="index.html" class="nav-back">← Volver al inicio</a>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-grid"></div>
+  <div class="hero-badge">Vota · Acumula · Gana</div>
+  <h1 class="page-title">🗳️ Votaciones</h1>
+  <p class="page-desc">Vota por DinoHeroes cada día con tu cuenta de Steam y acumula votos. A final de mes abre un ticket en Discord para reclamar tus <strong style="color:var(--gold-light)">150 puntos por voto</strong>.</p>
+</div>
+
+<div class="content-wrapper">
+  <div>
+    <!-- VOTE CARD -->
+    <a href="https://ark-servers.net/server/407372/vote/" target="_blank" class="vote-site-card">
+      <div class="vote-site-logo">🦕</div>
+      <div class="vote-site-info">
+        <div class="vote-site-name">ARK-Servers.net</div>
+        <div class="vote-site-desc">El listado más popular de ARK ASA. Vota cada 24 horas con tu cuenta de Steam.</div>
+      </div>
+      <div class="vote-btn">Votar →</div>
+    </a>
+
+    <!-- HOW IT WORKS -->
+    <div class="info-box">
+      <div class="info-box-title">Cómo funciona</div>
+      <div class="info-step">
+        <div class="info-step-num">1</div>
+        <div class="info-step-text">Pulsa <strong>Votar</strong> y vota con tu cuenta de <strong>Steam</strong>.</div>
+      </div>
+      <div class="info-step">
+        <div class="info-step-num">2</div>
+        <div class="info-step-text">Puedes votar <strong>cada 24 horas</strong>. Necesitas un mínimo de <strong>20 votos</strong> para recibir recompensa.</div>
+      </div>
+      <div class="info-step">
+        <div class="info-step-num">3</div>
+        <div class="info-step-text">A <strong>final de mes</strong> abre un ticket en Discord para reclamar tus <strong>150 puntos por voto</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Recompensa</div>
+      <div class="reward-tier">
+        <div class="tier-icon">🗳️</div>
+        <div class="tier-info">
+          <div class="tier-name">Por cada voto</div>
+          <div class="tier-desc">Acumulado mensualmente</div>
+        </div>
+        <div class="tier-reward">150 pts</div>
+      </div>
+      <div class="reward-tier">
+        <div class="tier-icon">⚠️</div>
+        <div class="tier-info">
+          <div class="tier-name">Mínimo requerido</div>
+          <div class="tier-desc">Para recibir recompensa</div>
+        </div>
+        <div class="tier-reward">20 votos</div>
+      </div>
+      <div class="reward-tier">
+        <div class="tier-icon">📅</div>
+        <div class="tier-info">
+          <div class="tier-name">Reparto</div>
+          <div class="tier-desc">Votos del mes anterior</div>
+        </div>
+        <div class="tier-reward" style="font-size:0.85rem;font-family:'Rajdhani',sans-serif;color:var(--teal)">Día 1</div>
+      </div>
+      <p style="font-size:0.72rem;color:var(--text-dim);margin-top:14px;line-height:1.5;text-align:center">Los puntos se usan en la tienda con <span style="color:var(--teal)">/shop</span></p>
+    </div>
+
+    <div class="status-card">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:12px">Estado del cluster</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite"></div>
+        <span style="font-family:'Rajdhani',sans-serif;font-size:0.9rem;color:var(--teal);font-weight:600">ONLINE</span>
+      </div>
+      <a href="https://discord.gg/AkEDDEPkVQ" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#5865F2,#4752C4);color:white;padding:10px;border-radius:8px;text-decoration:none;font-family:'Rajdhani',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:1px">
+        Discord →
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">DinoHeroes</div>
+  <div class="footer-links">
+    <a href="index.html">Inicio</a>
+    <a href="index.html#mapas">Mapas</a>
+    <a href="index.html#rangos">Rangos</a>
+    <a href="index.html#normas">Normas</a>
+    <a href="https://discord.gg/AkEDDEPkVQ">Discord</a>
+  </div>
+  <div class="footer-copy">© 2026 DinoHeroes · ARK Survival Ascended · Hecho con 🦕</div>
+</footer>
+
+</body>
+</html>
